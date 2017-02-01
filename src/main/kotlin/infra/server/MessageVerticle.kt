@@ -19,7 +19,6 @@ class MessageVerticle : AbstractVerticle() {
 
     override fun start(startFuture: Future<Void>?) {
         val router = createRouter()
-
         vertx.createHttpServer()
                 .requestHandler { router.accept(it) }
                 .listen(config().getInteger("http.port", 8005)) { result ->
@@ -30,6 +29,7 @@ class MessageVerticle : AbstractVerticle() {
                     }
                 }
 
+        vertx.deployVerticle(LuckyNumberVerticle())
     }
 
     private fun createRouter() = Router.router(vertx).apply {

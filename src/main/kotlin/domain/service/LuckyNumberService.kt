@@ -2,12 +2,6 @@ package domain.service
 
 import java.util.*
 
-
-/**
- *
- *
- * @author Claudio E. de Oliveira<claudioe@ciandt.com>
- */
 object LuckyNumberService {
 
     private val generator = Random()
