@@ -74,3 +74,4 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+/src/main/resources/webroot/node_modules/*

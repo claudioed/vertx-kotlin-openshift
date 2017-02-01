@@ -18,7 +18,7 @@ class LuckyNumberVerticle : AbstractVerticle() {
         numbers.getJsonArray("numbers").stream().forEach {
             run {
                 NumberCounter.count(it as Int)
-                vertx.eventBus().publish("lucky", it.toString())
+                vertx.eventBus().send("lucky", it.toString())
             }
         }
     }

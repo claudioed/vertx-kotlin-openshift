@@ -10,6 +10,10 @@ import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.handler.StaticHandler
+import io.vertx.ext.web.handler.sockjs.BridgeOptions
+import io.vertx.ext.web.handler.sockjs.PermittedOptions
+import io.vertx.ext.web.handler.sockjs.SockJSHandler
 import java.util.*
 
 /**
@@ -19,6 +23,17 @@ class MessageVerticle : AbstractVerticle() {
 
     override fun start(startFuture: Future<Void>?) {
         val router = createRouter()
+
+        val options =  PermittedOptions()
+        options.address = "lucky"
+
+
+        var bridgeOptions = BridgeOptions().addOutboundPermitted(options)
+
+        router.route("/eventbus/*").handler { SockJSHandler.create(vertx).bridge(bridgeOptions) }
+
+        router.route("/static/*").handler(StaticHandler.create())
+
         vertx.createHttpServer()
                 .requestHandler { router.accept(it) }
                 .listen(config().getInteger("http.port", 8005)) { result ->
