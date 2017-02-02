@@ -5,19 +5,46 @@
     <title>Lucky Numbers</title>
 </head>
 <body>
-<div id="log"></div>
+<div id="log">
+    <table style="border: 2px solid black;">
+        <tr>
+            <td id="1">1</td>
+            <td id="2">2</td>
+            <td id="3">3</td>
+            <td id="4">4</td>
+            <td id="5">5</td>
+            <td id="6">6</td>
+            <td id="7">7</td>
+            <td id="8">8</td>
+            <td id="9">9</td>
+            <td id="10">10</td>
+            <td id="11">11</td>
+            <td id="12">12</td>
+            <td id="13">13</td>
+            <td id="14">14</td>
+            <td id="15">15</td>
+            <td id="16">16</td>
+        </tr>
+
+    </table>
+
+
+</div>
 
 <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
 <script src="//cdn.jsdelivr.net/sockjs/1.0.0/sockjs.min.js"></script>
 <script src="node_modules/vertx3-eventbus-client/vertx-eventbus.js"></script>
 <script>
-  var eb = new EventBus('/eventbus/');
+    var eb = new EventBus('/bus');
 
-  eb.onopen = function () {
-    eb.registerHandler('lucky', function (err, msg) {
-      $('#log').prepend('<div>' + msg.body.now + '</div>');
-    });
-  };
+    eb.onopen = function () {
+        eb.registerHandler('lucky', function (err, msg) {
+            console.log('MSG:' + JSON.stringify(msg));
+            $('#log').prepend('<div>' + msg.body + '</div>');
+            $('#'+ msg.body).css('color', 'red');
+
+        });
+    };
 
 </script>
 </body>

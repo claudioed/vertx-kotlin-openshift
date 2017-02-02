@@ -23,17 +23,11 @@ class MessageVerticle : AbstractVerticle() {
 
     override fun start(startFuture: Future<Void>?) {
         val router = createRouter()
-
-        val options =  PermittedOptions()
+        val options = PermittedOptions()
         options.address = "lucky"
-
-
-        var bridgeOptions = BridgeOptions().addOutboundPermitted(options)
-
-        router.route("/eventbus/*").handler { SockJSHandler.create(vertx).bridge(bridgeOptions) }
-
-        router.route("/static/*").handler(StaticHandler.create())
-
+        val bridgeOptions = BridgeOptions().addOutboundPermitted(options).addInboundPermitted(options)
+        router.route("/bus/*").handler(SockJSHandler.create(vertx).bridge(bridgeOptions))
+        router.route().handler(StaticHandler.create())
         vertx.createHttpServer()
                 .requestHandler { router.accept(it) }
                 .listen(config().getInteger("http.port", 8005)) { result ->
@@ -54,14 +48,14 @@ class MessageVerticle : AbstractVerticle() {
 
     val handlerNewMessage = Handler<RoutingContext> { req ->
         val message = UuidMessage(UUID.randomUUID().toString())
-        vertx.eventBus().publish("new-message",Json.encodePrettily(message))
+        vertx.eventBus().publish("new-message", Json.encodePrettily(message))
         req.response().endWithJson(message)
     }
 
     val handlerLuckyNumber = Handler<RoutingContext> { req ->
         val luckyNumbers = LuckyNumberService.luckyNumber()
         val jsonObject = JsonObject().put("numbers", luckyNumbers)
-        vertx.eventBus().publish("lucky-numbers",jsonObject)
+        vertx.eventBus().publish("lucky-numbers", jsonObject)
         req.response().endWithJson(jsonObject)
     }
 
